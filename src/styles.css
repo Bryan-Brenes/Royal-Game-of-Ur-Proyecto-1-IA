@@ -1,1 +1,21 @@
-/* You can add global styles to this file, and also import other style files */
+:root{
+  --cell-size: 100px;
+}
+*, *::after, *::before{
+  box-sizing: border-box;
+}
+
+html, body{
+  margin: 0;
+  font-family: longa;
+}
+
+@font-face{
+  font-family: cardinal;
+  src: url('/assets/fonts/Cardinal.ttf');
+}
+
+@font-face{
+  font-family: longa;
+  src: url('/assets/fonts/longa.ttf');
+}

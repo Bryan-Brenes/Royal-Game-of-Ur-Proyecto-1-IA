@@ -1,0 +1,258 @@
+.game-title{
+  text-align: center;
+  color: black;
+  font-size: 4.5em;
+  letter-spacing: 2px;
+  font-weight: 500;
+  /*color: #ecc292;*/
+  color: #d2e0da;
+}
+
+.background{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url('/assets/backgrounds/bg13.jpg');
+  background-size: cover;
+  filter: brightness(70%);
+  /*background: #aa5725;*/
+  z-index: -1;
+}
+
+.winning-container{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.9);
+}
+
+.hide{
+  display: none;
+}
+
+.goal-chips-container{
+  width: calc(var(--cell-size) * 8);
+  margin: 5px auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.turn-container{
+  width: calc(var(--cell-size) * 8);
+  margin: 10px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.spin-button{
+  cursor: pointer;
+  padding: 0.8em 1.8em;
+  font-size: 1.3em;
+  background: #2a3c35;
+  border: none;
+  color: #eee7c4;
+  font-family: cardinal;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.spin-button:hover{
+  background: #3f5a50;
+}
+
+.spin-button:focus{
+  outline: none;
+}
+
+.spin-button:disabled{
+  background: #699685;
+  /*background: #DED18D;*/
+  /*color: black;*/
+  cursor: not-allowed;
+}
+
+.dice-number{
+  color: #fff;
+  font-size: 8em;
+  display: block;
+  margin-left: 20px;
+}
+
+.goal-chips-container img{
+  width: 30px;
+}
+
+.player-hub{
+  width: 50%;
+}
+
+.winning-text{
+  font-size: 4em;
+  color: #fff;
+  font-weight: 300;
+}
+
+.winning-button{
+  cursor: pointer;
+  padding: 0.8em 1.8em;
+  font-size: 1.3em;
+  background: #AA5725;
+  border: none;
+  color: #eee7c4;
+  font-family: cardinal;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.winning-button:hover{
+  background-color: #924c20;
+}
+
+.winning-button:focus{
+  outline: none;
+}
+
+.board-container{
+  width: 100vw;
+  height: 80vh;
+}
+
+.board{
+  /*width: 100%;*/
+  /*height: 100%;*/
+  display: grid;
+  justify-content: center;
+  align-content: center;
+  grid-template-columns: repeat(8, auto);
+}
+
+.cell{
+  width: var(--cell-size);
+  height: var(--cell-size);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  position: relative;
+}
+
+.cell.chip-info{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.player-hub{
+  position: relative;
+}
+
+.chip-count{
+  position: absolute;
+  bottom:20px;
+  color: #fff;
+  font-weight: 500;
+  font-size: 2.0em;
+}
+
+
+.cell:nth-child(5){
+  border-top: none;
+  border-right: none;
+}
+.cell:nth-child(6){
+  border-top: none;
+  border-left: none;
+}
+.cell:nth-child(21){
+  border-bottom: none;
+  border-right: none;
+}
+.cell:nth-child(22){
+  border-bottom: none;
+  border-left: none;
+}
+
+.cell:nth-child(1),
+.cell:nth-child(7),
+.cell:nth-child(12),
+.cell:nth-child(17),
+.cell:nth-child(23){
+  background-image: url('/assets/tiles/starTile.png');
+  background-size: cover;
+}
+
+.cell:nth-child(2),
+.cell:nth-child(4),
+.cell:nth-child(15),
+.cell:nth-child(18),
+.cell:nth-child(20){
+  background-image: url('/assets/tiles/eyesTile.png');
+  background-size: cover;
+}
+
+.cell:nth-child(3),
+.cell:nth-child(10),
+.cell:nth-child(13),
+.cell:nth-child(16),
+.cell:nth-child(19){
+  background-image: url('/assets/tiles/circlesTile.png');
+  background-size: cover;
+}
+
+.cell:nth-child(8),
+.cell:nth-child(24){
+  background-image: url('/assets/tiles/waveTile.png');
+  background-size: cover;
+}
+
+.cell:nth-child(9){
+  background-image: url('/assets/tiles/gridTile.png');
+  background-size: cover;
+}
+
+.cell:nth-child(11),
+.cell:nth-child(14){
+  background-image: url('/assets/tiles/squareTile.png');
+  background-size: cover;
+}
+
+.cell.black::after{
+  content: '';
+  width: calc(var(--cell-size)*0.6);
+  height: calc(var(--cell-size)*0.6);
+  /*width: 100px;*/
+  /*height: 100px;*/
+  display: block;
+  background-image: url('/assets/tiles/blackChip.png');
+  background-size: cover;
+  /*background-color: red;*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 3;
+}
+
+.cell.white::after{
+  content: '';
+  width: calc(var(--cell-size)*0.6);
+  height: calc(var(--cell-size)*0.6);
+  /*width: 100px;*/
+  /*height: 100px;*/
+  display: block;
+  background-image: url('/assets/tiles/whiteChip.png');
+  background-size: cover;
+  /*background-color: red;*/
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  z-index: 3;
+}
