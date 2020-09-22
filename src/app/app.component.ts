@@ -125,8 +125,10 @@ export class AppComponent {
 
     //console.log(this.board);
     console.log(this.moveBlackChip(this.board, 4, 4));
+    console.log(this.moveBlackChip(this.board, 0, 2));
     //console.log(this.moveWhiteChip(this.board, 20, 3));
-    console.log(this.moveWhiteChip(this.board, 15, 3));
+    console.log(this.moveWhiteChip(this.board, 20, 4));
+    console.log(this.moveWhiteChip(this.board, 16, 2));
     
     //console.log(this.putChipInBoard([0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0], 14, 22, 1));
   }
