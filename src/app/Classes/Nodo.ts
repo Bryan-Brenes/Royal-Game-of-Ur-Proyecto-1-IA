@@ -3,12 +3,16 @@ export class Nodo {
     private children: Nodo[];
     private alpha: number;
     private beta: number;
+    private end: boolean;
+    private secondTurn: boolean;
 
-    constructor(pBoard: number[][]){
+    constructor(pBoard: number[][], pEnd: boolean, pSecondTurn: boolean){
         this.board = pBoard;
         this.children = [];
         this.alpha = -Infinity;
         this.beta = Infinity;
+        this.end = pEnd;
+        this.secondTurn = pSecondTurn;
     }
 
     public addChidren(pChildren: Nodo){
@@ -33,5 +37,17 @@ export class Nodo {
 
     public getBoard(): number[][]{
         return this.board;
+    }
+
+    public getChildren(): Nodo[]{
+        return this.children;
+    }
+
+    public getState(): boolean{
+        return this.end;
+    }
+
+    public getSecondTurn(): boolean{
+        return this.secondTurn;
     }
 }
