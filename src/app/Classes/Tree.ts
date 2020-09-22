@@ -10,7 +10,7 @@ export class Tree {
     }
 
     private makeTree(pNum: number){
-        let levels = 5;
+        let levels = 6;
         let nodeActual = this.root;
         let player = -1;
         this.searchPlays(nodeActual, pNum, player);
