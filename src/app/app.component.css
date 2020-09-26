@@ -32,6 +32,8 @@
   justify-content: center;
   align-items: center;
   background: rgba(0, 0, 0, 0.9);
+  z-index: 10;
+  overflow: hidden;
 }
 
 .hide{
@@ -40,6 +42,7 @@
 
 .goal-chips-container{
   width: calc(var(--cell-size) * 8);
+  min-height: 50px;
   margin: 5px auto;
   display: flex;
   justify-content: flex-end;
@@ -54,18 +57,22 @@
   align-items: center;
 }
 
-.spin-button{
+.btn{
   cursor: pointer;
   padding: 0.8em 1.8em;
   font-size: 1.3em;
-  background: #2a3c35;
   border: none;
-  color: #eee7c4;
   font-family: cardinal;
   font-weight: 800;
   letter-spacing: 1px;
+  box-shadow: inset 0 0 20px 0 #000;
 }
 
+.spin-button{
+  background: #2a3c35;
+  margin-right: 20px;
+  color: #eee7c4;
+}
 .spin-button:hover{
   background: #3f5a50;
 }
@@ -79,6 +86,18 @@
   /*background: #DED18D;*/
   /*color: black;*/
   cursor: not-allowed;
+}
+
+.skip-button{
+  background: #580000;
+  color: #eee7c4;
+}
+.skip-button:hover{
+  background: #6d0000;
+}
+
+.skip-button:focus{
+  outline: none;
 }
 
 .dice-number{
@@ -112,6 +131,7 @@
   font-family: cardinal;
   font-weight: 800;
   letter-spacing: 1px;
+  box-shadow: inset 0 0 20px 0 #000;
 }
 
 .winning-button:hover{
@@ -255,4 +275,89 @@
   left: 50%;
   transform: translate(-50%,-50%);
   z-index: 3;
+}
+
+.turno-negro{
+  /*box-shadow: inset 0 0 24px 5px rgba(0, 0, 0, 0.8);*/
+  box-shadow: inset 0 0 24px 5px rgba(52, 75, 67, 1.0);
+}
+
+.turno-blanco{
+  box-shadow: inset 0 0 24px 5px rgba(105, 54, 23, 1.0);
+}
+
+.black-wins{
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  pointer-events: none;
+  animation-name: rotar;
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+.black-wins img:nth-child(1){
+  position: absolute;
+  top: 17%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.black-wins img:nth-child(2){
+  position: absolute;
+  top: 33%;
+  left: 67%;
+  transform: translate(-50%,-50%);
+}
+.black-wins img:nth-child(3){
+  position: absolute;
+  top: 50%;
+  left: 83%;
+  transform: translate(-50%,-50%);
+  display: none;
+}
+.black-wins img:nth-child(4){
+  position: absolute;
+  top: 67%;
+  left: 67%;
+  transform: translate(-50%,-50%);
+}
+.black-wins img:nth-child(5){
+  position: absolute;
+  top: 83%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+.black-wins img:nth-child(6){
+  position: absolute;
+  top: 67%;
+  left: 33%;
+  transform: translate(-50%,-50%);
+}
+.black-wins img:nth-child(7){
+  position: absolute;
+  top: 50%;
+  left: 17%;
+  transform: translate(-50%,-50%);
+  display: none;
+}
+
+.black-wins img:nth-child(8){
+  position: absolute;
+  top: 33%;
+  left: 33%;
+  transform: translate(-50%,-50%);
+}
+
+@keyframes rotar {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  50% {
+    transform: rotateZ(180deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
 }

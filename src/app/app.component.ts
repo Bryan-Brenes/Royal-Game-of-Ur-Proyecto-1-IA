@@ -8,6 +8,22 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent {
   title = 'royal-game-of-ur';
 
+  // indica si el juego no ha terminado o no ha empezado
+  activeGame: boolean;
+
+  // variables que indican quien ganó
+  blackWins: boolean;
+  whiteWins: boolean;
+
+  // variable que indica en seleccion de ficha
+  blockDice: boolean;
+
+  // variable que indica si donde caí es una estrella
+  caiEstrella: boolean;
+
+  // Texto de gane
+  winningText: string;
+
   // Array de tamaño 24 para representar el tablero
   board: number[];
 
@@ -46,6 +62,7 @@ export class AppComponent {
   whiteChipsEndCount: number;
 
   // variable that enables spin button
+  // true: jugador humano
   playerTurn: boolean;
 
   // Probabilidades de obtener numeros con dados
@@ -57,6 +74,13 @@ export class AppComponent {
   constructor(){}
 
   ngOnInit(){
+    this.activeGame = false;
+    this.blockDice = false;
+    this.caiEstrella = false;
+    this.winningText = 'Iniciar Partida';
+    this.blackWins = false;
+    this.whiteWins = false;
+
     // probabilidades
     this.one_two_probalitiy = 0.375;
     this.three_four_probability = 0.125;
@@ -94,15 +118,165 @@ export class AppComponent {
 
   handlePlayerTurn(){
     this.numberRolled = this.rollDice();
-    this.playerTurn = false;
-    setTimeout(()=> this.togglePlayerTurn(), 1000);
-    this.updateInterfaz();
+    this.blockDice = true;
+
+
+
+    //this.playerTurn = false;
+    //setTimeout(()=> this.togglePlayerTurn(), 1000);
+    //this.updateInterfaz();
+
+    // Al fina debe jugar inmediatament la IA
+    //this.handleIATurn();
+  }
+
+  handleIATurn(){
+  }
+
+  handleCellClick(cellIndex: number){
+    if(!this.blockDice){
+      return;
+    }
+    console.log("Se presionó la celda: ", cellIndex);
+    // Esto implica que es el jugador blanco
+    if(this.playerTurn){
+      // fijarse si se presionó la celda 20
+      if(cellIndex == this.whtLeftChipsBoardPos){
+        // fijar si hay fichas por jugar
+        if(this.board[this.whtLeftChipsBoardPos] > 0){
+          // mover la ficha indicada
+          let newBoard = this.moveWhiteChip(this.board, cellIndex, this.numberRolled);
+
+          // si el tablero devuelto es distinto de nulo cambiar el tablero global
+          if(newBoard){
+            this.board = newBoard;
+            this.blockDice = false;
+            if(!this.caiEstrella){
+              this.togglePlayerTurn();
+            } else {
+              this.caiEstrella = false;
+            }
+            this.updateInterfaz();
+
+            // revisar si el jugador blanco ganó
+            if(this.board[this.whtDoneChipsBoardPos] === this.totalChips){
+              this.winningText = "Partida finalizada";
+              this.activeGame = false;
+              this.whiteWins = true;
+            }
+          // jugada inválida
+          } else {
+            return;
+          }
+        } else {
+          return;
+        }
+      } else {
+        let cellValue = this.board[cellIndex];
+        // revisar si hay una ficha blanca debajo
+        if(cellValue === this.whiteValue){
+          let newBoard = this.moveWhiteChip(this.board, cellIndex, this.numberRolled);
+
+          // revisar si la jugada fue válida
+          if(newBoard){
+            this.board = newBoard;
+            this.blockDice = false;
+            if(!this.caiEstrella){
+              this.togglePlayerTurn();
+            } else {
+              this.caiEstrella = false;
+            }
+            this.updateInterfaz();
+            // revisar si el jugador blanco ganó
+            if(this.board[this.whtDoneChipsBoardPos] === this.totalChips){
+              this.winningText = "Partida finalizada";
+              this.activeGame = false;
+              this.whiteWins = true;
+            }
+          } else {
+            return;
+          }
+        // hay una ficha negra debajo
+        } else {
+          return;
+        }
+      }
+    } else {
+      // fijarse si se presionó la celda 4
+      if(cellIndex == this.bckLeftChipsBoardPos){
+        // fijar si hay fichas por jugar
+        if(this.board[this.bckLeftChipsBoardPos] > 0){
+          // mover la ficha indicada
+          let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
+
+          // si el tablero devuelto es distinto de nulo cambiar el tablero global
+          if(newBoard){
+            this.board = newBoard;
+            this.blockDice = false;
+            if(!this.caiEstrella){
+              this.togglePlayerTurn();
+            } else {
+              this.caiEstrella = false;
+            }
+            this.updateInterfaz();
+            // revisar si el jugador blanco ganó
+            if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
+              this.winningText = "Partida finalizada";
+              this.activeGame = false;
+              this.blackWins = true;
+            }
+          // jugada inválida
+          } else {
+            return;
+          }
+        } else {
+          return;
+        }
+      } else {
+        let cellValue = this.board[cellIndex];
+        // revisar si hay una ficha blanca debajo
+        if(cellValue === this.blackValue){
+          let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
+
+          // revisar si la jugada fue válida
+          if(newBoard){
+            this.board = newBoard;
+            this.blockDice = false;
+            if(!this.caiEstrella){
+              this.togglePlayerTurn();
+            } else {
+              this.caiEstrella = false;
+            }
+            this.updateInterfaz();
+            // revisar si el jugador blanco ganó
+            if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
+              this.winningText = "Partida finalizada";
+              this.activeGame = false;
+              this.blackWins = true;
+            }
+          } else {
+            return;
+          }
+        // hay una ficha negra debajo
+        } else {
+          return;
+        }
+      }
+    }
   }
 
   togglePlayerTurn(){
     this.playerTurn = !this.playerTurn;
   }
 
+  /**
+   * Funcion que devuele un número aleatorio entre 1 y 4 dada 
+   * la probabilidad de cada número
+   * 1: 37.5%
+   * 2: 37.5%
+   * 3: 12.5%
+   * 4: 12.5%
+   */
   rollDice():number{
     let random = Math.random();
     if(random >= 0 && random <= this.one_two_probalitiy){
@@ -119,17 +293,29 @@ export class AppComponent {
   }
 
   initBoard(){
+    // llenar el tablero con ceros (no hay piezes colocadas)
     this.board = Array(24).fill(0);
+
+    // colocar la cantidad de fichas de cada jugador en la celda respectiva
     this.board[this.bckLeftChipsBoardPos] = this.totalChips;
     this.board[this.whtLeftChipsBoardPos] = this.totalChips;
 
+    //this.blackChipsEndCount = 3;
+
     //console.log(this.board);
-    console.log(this.moveBlackChip(this.board, 4, 4));
-    console.log(this.moveBlackChip(this.board, 0, 2));
+    //console.log(this.moveBlackChip(this.board, 4, 4));
+
+    //this.board = this.moveBlackChip(this.board, 4, 4);
+    //console.log(this.board);
+    //this.board = this.moveBlackChip(this.board, 0, 1);
+    //console.log(this.board);
+    //this.board = this.moveBlackChip(this.board, 8, 2);
+    //console.log(this.board);
+
+    //console.log(this.moveBlackChip(this.board, 0, 2));
     //console.log(this.moveWhiteChip(this.board, 20, 3));
-    console.log(this.moveWhiteChip(this.board, 20, 4));
-    console.log(this.moveWhiteChip(this.board, 16, 2));
-    
+    //console.log(this.moveWhiteChip(this.board, 20, 4));
+    //console.log(this.moveWhiteChip(this.board, 16, 2));
     //console.log(this.putChipInBoard([0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 0, 0, 0], 14, 22, 1));
   }
 
@@ -292,6 +478,7 @@ export class AppComponent {
     for(let pos of this.flowerBoardPos){
       if( positionObjetivo === pos){
         esEstrella = true;
+        this.caiEstrella = true;
         break;
       }
     }
@@ -372,6 +559,9 @@ export class AppComponent {
         } else if (this.board[boardCellIndex] == this.blackValue){
           cells[boardCellIndex].classList.remove('white');
           cells[boardCellIndex].classList.add('black');
+        } else {
+          cells[boardCellIndex].classList.remove('white');
+          cells[boardCellIndex].classList.remove('black');
         }
       } 
     }
@@ -380,6 +570,24 @@ export class AppComponent {
     this.blackChipsEndCount = this.board[this.bckDoneChipsBoardPos];
     this.whiteChipsEndCount = this.board[this.whtDoneChipsBoardPos];
     //console.log(cells)
+  }
+
+  startGame(){
+    this.initBoard();
+    this.updateInterfaz();
+    this.blackWins = false;
+    this.whiteWins = false;
+    this.activeGame = true;
+    this.playerTurn = (Math.random() < 0.5) ? true : false;
+
+    if(!this.playerTurn){
+      this.handleIATurn();
+    }
+  }
+
+  skipTurn(){
+    this.togglePlayerTurn();
+    this.blockDice = false;
   }
 
 }

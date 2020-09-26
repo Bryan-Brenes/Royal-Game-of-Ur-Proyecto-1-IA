@@ -5,51 +5,77 @@
     <img *ngFor="let c of getArray(blackChipsEndCount)" src="/assets/tiles/blackChip.png" alt="">
   </div>
   <div id="board" class="board">
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell chip-info" board-cell not-part>
+
+    <!--inician las celdas -->
+    <div (click)="handleCellClick(0)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(1)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(2)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(3)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(4)" [ngClass]="{'turno-negro': !playerTurn}" class="cell chip-info" board-cell not-part>
       <div class="player-hud">
         <img src="/assets/tiles/blackChip.png" alt="">
         <span class="chip-count">{{blackChipsCount}}</span>
       </div>
     </div>
     <div class="cell chip-info" board-cell not-part></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
-    <div class="cell chip-info" board-cell not-part>
+    <div (click)="handleCellClick(6)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(7)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(8)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(9)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(10)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(11)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(12)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(13)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(14)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(15)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(16)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(17)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(18)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(19)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(20)" [ngClass]="{'turno-blanco': playerTurn}" class="cell chip-info" board-cell not-part>
       <div class="player-hud">
         <img src="/assets/tiles/whiteChip.png" alt="">
         <span class="chip-count">{{whiteChipsCount}}</span>
       </div>
     </div>
     <div class="cell chip-info" board-cell not-part></div>
-    <div class="cell" board-cell></div>
-    <div class="cell" board-cell></div>
+    <div (click)="handleCellClick(22)" class="cell" board-cell></div>
+    <div (click)="handleCellClick(23)" class="cell" board-cell></div>
+    <!--terminan las celdas -->
   </div>
   <div class="goal-chips-container">
     <img *ngFor="let c of getArray(whiteChipsEndCount)" src="/assets/tiles/whiteChip.png" alt="">
   </div>
   <div class="turn-container">
     <span class="dice-number">{{numberRolled}}</span>
-    <button (click)="handlePlayerTurn()" class="spin-button" [disabled]="!playerTurn">{{playerTurn? 'Lanzar' : 'Esperar'}}</button>
+    <div>
+      <button (click)="handlePlayerTurn()" class="spin-button btn" [disabled]="blockDice">{{!blockDice? 'Lanzar' : 'Mover'}}</button>
+      <button (click)="skipTurn()" class="skip-button btn">Saltar turno</button>
+    </div>
   </div>
 </div>
 
-<div class="winning-container hide" id="winning-container">
-  <h2 class="winning-text" id="winning-text">Ganó!</h2>
-  <button class="winning-button">Reiniciar</button>
+<div class="winning-container" [ngClass]="{'hide': activeGame}" id="game-start-container">
+  <h2 class="winning-text" id="winning-text">{{winningText}}</h2>
+  <button (click)="startGame()" class="winning-button">Jugar</button>
+  <div class="black-wins" *ngIf="blackWins">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+    <img src="/assets/tiles/blackChip.png" alt="">
+  </div>
+  <div class="black-wins" *ngIf="whiteWins">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+    <img src="/assets/tiles/whiteChip.png" alt="">
+  </div>
 </div>
