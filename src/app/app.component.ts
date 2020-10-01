@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {Tree} from './Classes/Tree';
+import {ArtificialInteligenceService} from './services/artificial-inteligence.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,8 @@ import {Tree} from './Classes/Tree';
 })
 export class AppComponent {
   title = 'royal-game-of-ur';
+
+  updateDelay: number;
 
   // indica si el juego no ha terminado o no ha empezado
   activeGame: boolean;
@@ -72,10 +75,11 @@ export class AppComponent {
 
   numberRolled: number;
 
-  constructor(){}
+  constructor(private aiService: ArtificialInteligenceService){}
 
   ngOnInit(){
     this.activeGame = false;
+    this.updateDelay = 500;
     this.blockDice = false;
     this.caiEstrella = false;
     this.winningText = 'Iniciar Partida';
@@ -104,6 +108,8 @@ export class AppComponent {
     this.whtDoneChipsBoardPos = 21;
     this.flowerBoardPos = [0, 6, 11, 16, 22];
     this.initBoard();
+
+    //console.log( this.aiService.minimax(this.board, 4) );
   }
 
   /**
@@ -120,18 +126,25 @@ export class AppComponent {
   handlePlayerTurn(){
     this.numberRolled = this.rollDice();
     this.blockDice = true;
-
-
-
-    //this.playerTurn = false;
-    //setTimeout(()=> this.togglePlayerTurn(), 1000);
-    //this.updateInterfaz();
-
-    // Al fina debe jugar inmediatament la IA
-    //this.handleIATurn();
   }
 
   handleIATurn(){
+    this.blockDice = true;
+    let oldBoard = this.board;
+    this.numberRolled = this.rollDice();
+    console.log("IA sacó: ", this.numberRolled);
+    this.board = this.aiService.minimax(this.board, this.numberRolled);
+    if(this.validateIfIADoubleTurn(oldBoard, this.board)){
+      console.log("IA debe volver a jugar");
+      setTimeout(()=> {this.updateInterfaz(); this.handleIATurn()}, this.updateDelay);
+      //this.handleIATurn();
+      //setTimeout(()=> {this.handleIATurn(); this.updateInterfaz()}, this.updateDelay);
+      return;
+    }
+    console.log("Actualizando interfaz");
+    setTimeout(()=> {this.updateInterfaz(); this.togglePlayerTurn(); this.blockDice = false}, this.updateDelay);
+    //this.togglePlayerTurn();
+    return;
   }
 
   handleCellClick(cellIndex: number){
@@ -202,72 +215,76 @@ export class AppComponent {
           return;
         }
       }
-    } else {
-      // fijarse si se presionó la celda 4
-      if(cellIndex == this.bckLeftChipsBoardPos){
-        // fijar si hay fichas por jugar
-        if(this.board[this.bckLeftChipsBoardPos] > 0){
-          // mover la ficha indicada
-          let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
+    } //else {
+      //// fijarse si se presionó la celda 4
+      //if(cellIndex == this.bckLeftChipsBoardPos){
+        //// fijar si hay fichas por jugar
+        //if(this.board[this.bckLeftChipsBoardPos] > 0){
+          //// mover la ficha indicada
+          //let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
 
-          // si el tablero devuelto es distinto de nulo cambiar el tablero global
-          if(newBoard){
-            this.board = newBoard;
-            this.blockDice = false;
-            if(!this.caiEstrella){
-              this.togglePlayerTurn();
-            } else {
-              this.caiEstrella = false;
-            }
-            this.updateInterfaz();
-            // revisar si el jugador blanco ganó
-            if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
-              this.winningText = "Partida finalizada";
-              this.activeGame = false;
-              this.blackWins = true;
-            }
-          // jugada inválida
-          } else {
-            return;
-          }
-        } else {
-          return;
-        }
-      } else {
-        let cellValue = this.board[cellIndex];
-        // revisar si hay una ficha blanca debajo
-        if(cellValue === this.blackValue){
-          let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
+          //// si el tablero devuelto es distinto de nulo cambiar el tablero global
+          //if(newBoard){
+            //this.board = newBoard;
+            //this.blockDice = false;
+            //if(!this.caiEstrella){
+              //this.togglePlayerTurn();
+            //} else {
+              //this.caiEstrella = false;
+            //}
+            //this.updateInterfaz();
+            //// revisar si el jugador blanco ganó
+            //if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
+              //this.winningText = "Partida finalizada";
+              //this.activeGame = false;
+              //this.blackWins = true;
+            //}
+          //// jugada inválida
+          //} else {
+            //return;
+          //}
+        //} else {
+          //return;
+        //}
+      //} else {
+        //let cellValue = this.board[cellIndex];
+        //// revisar si hay una ficha blanca debajo
+        //if(cellValue === this.blackValue){
+          //let newBoard = this.moveBlackChip(this.board, cellIndex, this.numberRolled);
 
-          // revisar si la jugada fue válida
-          if(newBoard){
-            this.board = newBoard;
-            this.blockDice = false;
-            if(!this.caiEstrella){
-              this.togglePlayerTurn();
-            } else {
-              this.caiEstrella = false;
-            }
-            this.updateInterfaz();
-            // revisar si el jugador blanco ganó
-            if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
-              this.winningText = "Partida finalizada";
-              this.activeGame = false;
-              this.blackWins = true;
-            }
-          } else {
-            return;
-          }
-        // hay una ficha negra debajo
-        } else {
-          return;
-        }
-      }
-    }
+          //// revisar si la jugada fue válida
+          //if(newBoard){
+            //this.board = newBoard;
+            //this.blockDice = false;
+            //if(!this.caiEstrella){
+              //this.togglePlayerTurn();
+            //} else {
+              //this.caiEstrella = false;
+            //}
+            //this.updateInterfaz();
+            //// revisar si el jugador blanco ganó
+            //if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
+              //this.winningText = "Partida finalizada";
+              //this.activeGame = false;
+              //this.blackWins = true;
+            //}
+          //} else {
+            //return;
+          //}
+        //// hay una ficha negra debajo
+        //} else {
+          //return;
+        //}
+      //}
+    //}
   }
 
   togglePlayerTurn(){
     this.playerTurn = !this.playerTurn;
+    if(!this.playerTurn){
+      setTimeout(()=> {this.handleIATurn()}, this.updateDelay);
+      //this.handleIATurn();
+    }
   }
 
   /**
@@ -280,7 +297,7 @@ export class AppComponent {
    */
   rollDice():number{
     let random = Math.random();
-    let tree = new Tree([[0,-1,-1,0,1,0,0,0],[0,1,-1,0,0,0,-1,0],[0,0,1,1,2,0,0,0]],4);
+    //let tree = new Tree([[0,-1,-1,0,1,0,0,0],[0,1,-1,0,0,0,-1,0],[0,0,1,1,2,0,0,0]],4);
     //let tree = new Tree([[0,0,-1,0,2,0,0,0],[0,-1,-1,0,0,0,-1,0],[0,0,1,1,2,0,0,0]],4);
 
     if(random >= 0 && random <= this.one_two_probalitiy){
@@ -585,13 +602,35 @@ export class AppComponent {
     this.playerTurn = (Math.random() < 0.5) ? true : false;
 
     if(!this.playerTurn){
-      this.handleIATurn();
+      //this.handleIATurn();
+      setTimeout(() => {this.handleIATurn()}, this.updateDelay);
     }
   }
 
   skipTurn(){
     this.togglePlayerTurn();
     this.blockDice = false;
+  }
+
+  validateIfIADoubleTurn(oldBoard:number[], newBoard: number[]): boolean{
+    let oldFirstStarValue = oldBoard[0];
+    let oldSecondStarValue = oldBoard[6];
+    let oldThirdStarValue = oldBoard[11];
+
+    let newFirstStarValue = newBoard[0];
+    let newSecondStarValue =newBoard[6];
+    let newThirdStarValue = newBoard[11];
+
+    if(newFirstStarValue < oldFirstStarValue){
+      return true;
+    }
+    if(newSecondStarValue < oldSecondStarValue){
+      return true;
+    }
+    if(newThirdStarValue < oldThirdStarValue){
+      return true;
+    }
+    return false;
   }
 
 }
