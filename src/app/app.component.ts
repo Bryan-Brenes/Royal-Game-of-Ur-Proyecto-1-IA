@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {Tree} from './Classes/Tree';
 
 @Component({
   selector: 'app-root',
@@ -279,6 +280,9 @@ export class AppComponent {
    */
   rollDice():number{
     let random = Math.random();
+    let tree = new Tree([[0,-1,-1,0,1,0,0,0],[0,1,-1,0,0,0,-1,0],[0,0,1,1,2,0,0,0]],4);
+    //let tree = new Tree([[0,0,-1,0,2,0,0,0],[0,-1,-1,0,0,0,-1,0],[0,0,1,1,2,0,0,0]],4);
+
     if(random >= 0 && random <= this.one_two_probalitiy){
       return 1;
     }
