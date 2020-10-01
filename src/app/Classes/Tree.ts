@@ -1,16 +1,19 @@
 import {Nodo} from './Nodo';
 import {cloneDeep} from 'lodash';
+import { of } from 'rxjs';
 
 export class Tree {
     root: Nodo;
 
-    constructor(pBoard: number[][], pNum: number){
-        this.root = new Nodo(pBoard,false,false);
-        this.makeTree(pNum);
+    constructor(pBoard: number[][], pNum: number,b:boolean){
+        if(b){
+            this.root = new Nodo(pBoard,false,false);
+            this.makeTree(pNum);
+        }
     }
 
     private makeTree(pNum: number){
-        let levels = 6;
+        let levels = 4;
         let nodeActual = this.root;
         let player = -1;
         this.searchPlays(nodeActual, pNum, player);
@@ -19,7 +22,6 @@ export class Tree {
         for (let index = 0; index < levels; index++) {
             if(nodes.length == 0)
                 break;
-            console.log("Nuevoo nivel "+index);
             player = -player;
             while(nodes.length != 0){
                 let children = [].concat(nodes[0].getChildren());
@@ -41,20 +43,23 @@ export class Tree {
             }
             nodes = [].concat(nodesAux);
             nodesAux = [];
-        }
-        console.log("Ya");
-        this.recorrer(this.root);
-        console.log("--- FIN --- ");
-
+        }  
     }
 
-    private searchPlays(pNode: Nodo, pNum: number, pPlayer: number){
+    public getboard(): number[][]{
+        this.minimax(this.root,5,true);
+        console.log(this.root.getBeta()+" **** FIN **** "+this.root.getAlpha());
+        for (let index = 0; index < this.root.getChildren().length; index++) {
+            if(this.root.getChildren()[index].getBeta() == this.root.getAlpha())
+                return this.root.getChildren()[index].getBoard();
+        }
+        console.log("no entro");
+        return this.root.getBoard();
+    }
+
+    public searchPlays(pNode: Nodo, pNum: number, pPlayer: number){
         let board = pNode.getBoard();
-        //console.log("- Original num: "+num+" player: "+ player + "-");
-        //console.log(board);
         if(pNum == 0){
-            //console.log("--- Nuevo --- ");
-            //console.log(board);
             pNode.addChidren(new Nodo(cloneDeep(board), false,false));
             return;
         }
@@ -67,7 +72,6 @@ export class Tree {
                 let newBoard = this.getNewBoard(newPosition, positions[index], cloneDeep(board),pPlayer);
                 if(newBoard[0][5] == 7 || newBoard[2][5] == 7){
                     pNode.addChidren(new Nodo(newBoard, true,false));
-                    console.log(newBoard);
                 }
                 else{
                     pNode.addChidren(new Nodo(newBoard, false,this.isSecondTurn(newPosition,pPlayer)));
@@ -75,10 +79,42 @@ export class Tree {
             }
         }
         if(count == 0){
-            //console.log("--- Nuevo --- ");
-            //console.log(board);
             pNode.addChidren(new Nodo(cloneDeep(board), false,false));
         }
+        
+    }
+
+    public search(pNodo: number[][], pNum: number): number[][][]{
+        let pNode = new Nodo(pNodo,false,false);
+        let board = pNode.getBoard();
+        let player = 1;
+        let plays = [];
+        if(pNum == 0){
+            pNode.addChidren(new Nodo(cloneDeep(board), false,false));
+            return;
+        }
+        let positions = this.getPositions(board,player);
+        let count = 0;
+        for (let index = 0; index < positions.length; index++) {
+            let newPosition = this.positionFollow(positions[index],pNum,board,player);
+            if(newPosition[0] != -1){
+                count++;
+                let newBoard = this.getNewBoard(newPosition, positions[index], cloneDeep(board),player);
+                if(newBoard[0][5] == 7 || newBoard[2][5] == 7){
+                    pNode.addChidren(new Nodo(newBoard, true,false));
+                }
+                else{
+                    pNode.addChidren(new Nodo(newBoard, false,this.isSecondTurn(newPosition,player)));
+                }
+                plays.push(cloneDeep(newBoard));
+                console.log("-----Opciones--------");
+                console.log(newBoard);
+            }
+        }
+        if(count == 0){
+            pNode.addChidren(new Nodo(cloneDeep(board), false,false));
+        }
+        return plays;
     }
 
     private isSecondTurn(pNewPosition: number[], pPlayer: number): boolean{
@@ -97,7 +133,7 @@ export class Tree {
         let nivel = (pPlayer < 0)? 0 : 2;
         for (let i = 0; i < pBoard.length; i++) {
             for (let j = 0; j < pBoard[i].length; j++) {
-                if(pBoard[i][j] == pPlayer && (i != 0 || (j != 4 && j != 5))){
+                if(pBoard[i][j] == pPlayer && ((i != 0 && i != 2) || (j != 4 && j != 5))){
                     positions.push([i,j]);
                 }
             }
@@ -118,7 +154,7 @@ export class Tree {
                 pos[0] = 1;
             }
         }
-        else if(pPosition[0] == nivel && pPosition[1] >= 5){
+        else if(pPosition[0] == nivel && pPosition[1] > 5){
             pos[1] = pPosition[1] - pNum;
             if(pos[1] >= 5)
                 pos[0] = nivel;
@@ -135,7 +171,7 @@ export class Tree {
                     pos = [-1,-1];
             }
         }
-        if(pos[0] != -1 && pBoard[pos[0]][pos[1]] == player){
+        if(pos[0] != -1 && (pBoard[pos[0]][pos[1]] == player && ((pos[1] < 4  || pos[1] > 5) || (pos[0] == 1)))){
             pos = [-1,-1];
         }
         return pos;
@@ -143,7 +179,6 @@ export class Tree {
 
     private getNewBoard(pNewPosition: number[], pPosition: number[], pBoard: number[][], pPlayer: number): number[][]{
         let nivel = (pPlayer < 0)? 0 : 2;
-        //console.log("anterior: "+ pPlayer);
         if(pNewPosition[0] == nivel && pNewPosition[1] == 5){
             pBoard[nivel][5] += 1;
             pBoard[pPosition[0]][pPosition[1]] = 0;
@@ -158,22 +193,53 @@ export class Tree {
             else
                 pBoard[pPosition[0]][pPosition[1]] = 0;
         }
-        //console.log("----------Nuevo-----------");
-        //console.log(pBoard);
         return pBoard;
     }
 
-    public recorrer(pNode: Nodo){
-        let nodeActual = pNode;
-        let children = nodeActual.getChildren();
-        console.log("---------Padre--------- " + children.length);
-        console.log(nodeActual.getBoard());
-        for (let index = 0; index < children.length; index++) {
-            console.log("---Hijo----");
-            console.log(children[index].getBoard());
+    private minimax(pNode: Nodo, pLevels: number, pMaximizingPlayer: boolean): number{
+        if(pLevels == 0 || pNode.getState())
+            return this.evualuate(pNode.getBoard());
+        if(pMaximizingPlayer){
+            let value;
+            for (let index = 0; index < pNode.getChildren().length; index++) {
+                let node = pNode.getChildren()[index];
+                value = this.minimax(node,pLevels-1,false);
+                pNode.setAlpha(Math.max(pNode.getAlpha(), value));
+                if(pNode.getAlpha() >= pNode.getBeta())
+                    break;
+            }
+            return pNode.getAlpha();
         }
-        for (let index = 0; index < children.length; index++) {
-            this.recorrer(children[index]);
+        else{
+            let value;
+            for (let index = 0; index < pNode.getChildren().length; index++) {
+                let node = pNode.getChildren()[index];
+                value = this.minimax(node,pLevels-1,true);
+                pNode.setBeta(Math.min(pNode.getBeta(), value));
+                if(pNode.getAlpha() >= pNode.getBeta())
+                    break;
+            }
+            return pNode.getBeta();
         }
+    }
+
+    private evualuate(pBoard: number[][]): number{
+        let count = 0;
+        let cant = (pBoard[0][5] - pBoard[2][5]);
+        count += 12*cant;
+        cant = (pBoard[2][4] - pBoard[0][4]);
+        count += 2*cant;
+        cant = 0;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 4; j < 8; j++) {
+                if((i == 1 && j >= 4) || (i != 1 && j >= 6)){
+                    count += (-pBoard[i][j])*j;
+                    if(i != 1)
+                        count += (-pBoard[i][j])*2;
+                }
+            }
+            
+        }
+        return count;
     }
 }
