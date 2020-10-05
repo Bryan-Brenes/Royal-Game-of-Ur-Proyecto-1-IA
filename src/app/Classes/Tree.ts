@@ -5,8 +5,8 @@ import { of } from "rxjs";
 export class Tree {
   root: Nodo;
 
-  constructor(pBoard: number[][], pNum: number, b: boolean) {
-    if (b) {
+  constructor(pBoard: number[][], pNum: number, pPlayer: boolean) {
+    if (pPlayer) {
       this.root = new Nodo(pBoard, false, false);
       this.makeTree(pNum);
     }
@@ -264,8 +264,10 @@ export class Tree {
     pLevels: number,
     pMaximizingPlayer: boolean
   ): number {
-    if (pLevels == 0 || pNode.getState())
+    if (pLevels == 0 || pNode.getState()){
+      pNode.setBeta(this.evualuate(pNode.getBoard()));
       return this.evualuate(pNode.getBoard());
+    }
     if (pMaximizingPlayer) {
       let value;
       for (let index = 0; index < pNode.getChildren().length; index++) {
