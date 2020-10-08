@@ -128,6 +128,15 @@ export class AppComponent {
     this.blockDice = true;
   }
 
+  checkIfIAWon(){
+
+    if(this.board[this.bckDoneChipsBoardPos] === this.totalChips){
+      this.winningText = "Partida finalizada";
+      this.activeGame = false;
+      this.blackWins = true;
+    }
+  }
+
   handleIATurn(){
     this.blockDice = true;
     let oldBoard = this.board;
@@ -136,13 +145,13 @@ export class AppComponent {
     this.board = this.aiService.minimax(this.board, this.numberRolled);
     if(this.validateIfIADoubleTurn(oldBoard, this.board)){
       console.log("IA debe volver a jugar");
-      setTimeout(()=> {this.updateInterfaz(); this.handleIATurn()}, this.updateDelay);
+      setTimeout(()=> {this.updateInterfaz(); this.handleIATurn(); this.checkIfIAWon()}, this.updateDelay);
       //this.handleIATurn();
       //setTimeout(()=> {this.handleIATurn(); this.updateInterfaz()}, this.updateDelay);
       return;
     }
     console.log("Actualizando interfaz");
-    setTimeout(()=> {this.updateInterfaz(); this.togglePlayerTurn(); this.blockDice = false}, this.updateDelay);
+    setTimeout(()=> {this.updateInterfaz(); this.togglePlayerTurn(); this.blockDice = false; this.checkIfIAWon()}, this.updateDelay);
     //this.togglePlayerTurn();
     return;
   }
